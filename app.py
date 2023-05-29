@@ -1,5 +1,4 @@
 import os
-import datetime
 import time
 import certifi
 import bcrypt
@@ -8,7 +7,6 @@ from flask import Flask, flash, redirect, render_template, request, session, mak
 from flask_session import Session
 from tempfile import mkdtemp
 from pymongo import MongoClient
-from werkzeug.security import generate_password_hash, check_password_hash
 
 from helpers import apology, login_required
 from dotenv import load_dotenv
