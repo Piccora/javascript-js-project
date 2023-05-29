@@ -26,10 +26,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure application to use mongoDB database
-client = MongoClient(os.getenv("CONNECTION"), server_api=ServerApi('1'))#tlsCAFile=certifi.where())
-
-client.admin.command('ping')
-print("Pinged your deployment. You successfully connected to MongoDB!")
+client = MongoClient(os.getenv("CONNECTION"), server_api=ServerApi('1'))
 
 db = client["survey-database"]
 users = db["user"]
@@ -74,7 +71,7 @@ def login():
             return apology("must provide password", 403)
         
         # Check if user exists in the database. If so, compare their password
-        user = list(users.find_one({"username": request.form.get("username").strip()}))
+        user = dict(users.find_one({"username": request.form.get("username").strip()}))
         if not user or not bcrypt.checkpw(request.form.get("password").strip().encode("utf-8"), user["password"]):
             return apology("invalid username and/or password", 403)
         
@@ -150,12 +147,7 @@ def register():
 @login_required
 def render_questions(survey_code=0):
     if request.method == "GET":
-        # data = request.form["surveyId"]
-        # print(data)
-        # resp = make_response('{"response": "successful"}')
-        # resp.headers["Content-type"] = "application/json"
         return render_template("survey-questions.html", questions=list(survey_questions_and_answers.find({"survey_id": int(survey_code)})))
-        # return resp
 
 @app.route("/logout", methods=["GET", "POST"])
 def logout():
