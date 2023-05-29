@@ -74,3 +74,6 @@ flask_session
 
 # test.py
 test.py
+
+# .venv
+.venv
