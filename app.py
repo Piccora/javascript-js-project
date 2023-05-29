@@ -28,6 +28,9 @@ Session(app)
 # Configure application to use mongoDB database
 client = MongoClient(os.getenv("CONNECTION"), server_api=ServerApi('1'))#tlsCAFile=certifi.where())
 
+client.admin.command('ping')
+print("Pinged your deployment. You successfully connected to MongoDB!")
+
 db = client["survey-database"]
 users = db["user"]
 survey_list = db["survey-list"]
@@ -71,7 +74,7 @@ def login():
             return apology("must provide password", 403)
         
         # Check if user exists in the database. If so, compare their password
-        user = dict(users.find_one({"username": request.form.get("username").strip()}))
+        user = list(users.find_one({"username": request.form.get("username").strip()}))
         if not user or not bcrypt.checkpw(request.form.get("password").strip().encode("utf-8"), user["password"]):
             return apology("invalid username and/or password", 403)
         
