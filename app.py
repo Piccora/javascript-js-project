@@ -6,7 +6,8 @@ import bcrypt
 from flask import Flask, flash, redirect, render_template, request, session, make_response
 from flask_session import Session
 from tempfile import mkdtemp
-from pymongo import MongoClient
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
 
 from helpers import apology, login_required
 from dotenv import load_dotenv
@@ -25,7 +26,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure application to use mongoDB database
-client = MongoClient(os.getenv("CONNECTION"), tlsCAFile=certifi.where())
+client = MongoClient(os.getenv("CONNECTION"), server_api=ServerApi('1'))#tlsCAFile=certifi.where())
 
 db = client["survey-database"]
 users = db["user"]
