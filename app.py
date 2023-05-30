@@ -2,8 +2,9 @@ import os
 import time
 import certifi
 import bcrypt
+import json
 
-from flask import Flask, flash, redirect, render_template, request, session, make_response
+from flask import Flask, flash, redirect, render_template, request, session, make_response, jsonify
 from flask_session import Session
 from tempfile import mkdtemp
 from pymongo.mongo_client import MongoClient
@@ -147,7 +148,25 @@ def register():
 @login_required
 def render_questions(survey_code=0):
     if request.method == "GET":
-        return render_template("survey-questions.html", questions=list(survey_questions_and_answers.find({"survey_id": int(survey_code)})))
+        return render_template("survey-questions.html", questions=list(survey_questions_and_answers.find({"survey_id": int(survey_code)})), survey_id=int(survey_code))
+
+@app.route("/add-question", methods=["GET", "POST"])
+@login_required
+def add_question():
+    if request.method == "POST":
+        survey_id = json.loads(request.data).get("survey_id")
+        if json.loads(request.data).get("question_type") == "MCQ":
+            answer1, answer2, answer3 = json.loads(request.data).get("answer1"), json.loads(request.data).get("answer2"), json.loads(request.data).get("answer3")
+            question = json.loads(request.data).get("question")
+            survey_questions_and_answers.insert_one({
+                "_id": survey_questions_and_answers.count_documents({}) + 1,
+                "survey_id": int(survey_id),
+                "question": question,
+                "question_type": json.loads(request.data).get("question_type"),
+                "answers": {answer1: 0, answer2: 0, answer3: 0}
+            })
+            return jsonify({"response": "success"})
+
 
 @app.route("/logout", methods=["GET", "POST"])
 def logout():

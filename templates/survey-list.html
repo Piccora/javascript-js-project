@@ -10,11 +10,11 @@
         <li class="list-group-item pt-0 p-2 mb-2">
             <div class="d-flex align-items-center">
                 <div class="flex-grow-1">
-                    <h1 class="mb-0"><a class="hovering-survey-link" href='render-questions/{{ survey["_id"] }}' value='{{ survey["_id"] }}' id="surveyName">{{ survey["survey_name"] }}</a></h1>
+                    <h1 class="mb-0"><a class="hovering-survey-link" href='render-questions/{{ survey["_id"] }}' id="surveyName">{{ survey["survey_name"] }}</a></h1>
                 </div>
                 <div class="flex-shrink-0 text-end">
                     <span>
-                        <button type="button" class="btn btn-primary" onclick="confirmSurveyDeletion(this)">Delete</button>
+                        <button type="button" class="btn btn-primary" onclick="confirmSurveyDeletion(this)" value='{{ survey["_id"] }}'>Delete</button>
                     </span>
                 </div>
             </div>
