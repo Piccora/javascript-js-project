@@ -1,73 +1,70 @@
-// function callRenderQuestions(id) {
-//     console.log(id)
-//     let response = $.ajax({
-//         type: "POST",
-//         url: "/render-questions",
-//         async: false,
-//         data: { surveyId: id }
-//     });
-    
-//     return response.responseText;
-// }
-
-// const renderQuestions = document.querySelectorAll("#surveyName");
-// renderQuestions.forEach(el => {
-//     el.addEventListener("click", () => {
-//         console.log(callRenderQuestions(el.getAttribute("value")))
-//     })
-// })
-
 let surveyId;
+let questionId;
+let questionType;
 
 // Get the modal
-let modal = document.getElementById("myModal");
+let questionAdditionModal = document.getElementById("questionAdditionModal");
+let questionDeletionModal = document.getElementById("questionDeletionModal");
 
 // Get the <span> element that closes the modal
-let span = document.getElementsByClassName("close")[0];
+let spanAddition = document.getElementsByClassName("closeAddition")[0];
+let spanDeletion = document.getElementsByClassName("closeDeletion")[0];
 
 // When the user clicks on <span> (x), close the modal
-span.onclick = function() {
-  modal.style.display = "none";
+spanAddition.onclick = function() {
+  questionAdditionModal.style.display = "none";
   document.getElementById("questionArea").value = "";
   document.getElementById("dropdownQuestionButton").innerHTML = "Dropdown button";
+  document.getElementById("buttonYes").style.display = "none";
+  document.getElementById("buttonNo").style.display = "none";
   surveyId = undefined;
   renderQuestionStructure();
 }
 
+spanDeletion.onclick = function() {
+  questionDeletionModal.style.display = "none";
+  document.getElementById("buttonYes").style.display = "none";
+  document.getElementById("buttonNo").style.display = "none";
+  surveyId = undefined;
+}
+
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
+  if (event.target == questionAdditionModal || event.target == questionDeletionModal) {
+    questionDeletionModal.style.display = "none";
+    questionAdditionModal.style.display = "none";
     document.getElementById("questionArea").value = "";
     document.getElementById("dropdownQuestionButton").innerHTML = "Dropdown button";
+    document.getElementById("buttonYes").style.display = "none";
+    document.getElementById("buttonNo").style.display = "none";
     surveyId = undefined;
     renderQuestionStructure();
   }
 }
 
-function confirmSurveyDeletion(event) {
-  modal.style.display = "block";
-  surveyId = event.value;
-  console.log(surveyId);
+function confirmQuestionDeletion(event) {
+    questionDeletionModal.style.display = "block";
+    questionId = event.getAttribute("value");
 }
 
 function renderQuestionModal(event) {
-  modal.style.display = "block";
-  surveyId = event.getAttribute("value")
-  console.log(surveyId);
+  questionAdditionModal.style.display = "block";
+  surveyId = event.getAttribute("value");
 }
 
 function exitModal() {
-  modal.style.display = "none";
+  questionDeletionModal.style.display = "none";
+  questionAdditionModal.style.display = "none";
+  document.getElementById("buttonYes").style.display = "none";
+  document.getElementById("buttonNo").style.display = "none";
   document.getElementById("questionArea").value = "";
   document.getElementById("dropdownQuestionButton").innerHTML = "Dropdown button";
   renderQuestionStructure();
   surveyId = undefined;
-  console.log(surveyId);
 }
 
 function replaceDropdownText(event) {
-  document.getElementById("dropdownQuestionButton").innerHTML = event.innerHTML;
+  document.getElementById("dropdownQuestionButton").innerHTML = event.getAttribute("value");
 }
 
 function renderQuestionStructure() {
@@ -176,8 +173,8 @@ function addQuestion() {
       async: false,
       contentType: "application/json",
       data: JSON.stringify({ question: document.getElementById("questionArea").value,
-              question_type: "Checkbox",
-              survey_id: surveyId}),
+              question_type: "Open-ended",
+              survey_id: surveyId }),
       success: function(response) {
         console.log(response);
         location.reload();
@@ -189,11 +186,25 @@ function addQuestion() {
       async: false,
       contentType: "application/json",
       data: JSON.stringify({ question: document.getElementById("questionArea").value,
-              question_type: "Checkbox",
-              survey_id: surveyId}),
+              question_type: "Close-ended",
+              survey_id: surveyId }),
       success: function(response) {
         console.log(response);
         location.reload();
       }});
   }
 }
+
+function deleteQuestion() {
+  $.ajax({
+    type: "POST",
+    url: "/delete-question",
+    async: false,
+    contentType: "application/json",
+    data: JSON.stringify({ question_id: questionId }),
+    success: function(response) {
+      console.log(response);
+      location.reload();
+    }});
+}
+// TODO: Refactor code

@@ -155,18 +155,51 @@ def render_questions(survey_code=0):
 def add_question():
     if request.method == "POST":
         survey_id = json.loads(request.data).get("survey_id")
-        if json.loads(request.data).get("question_type") == "MCQ":
+        question_type = json.loads(request.data).get("question_type")
+        if question_type == "MCQ" or question_type == "Checkbox":
             answer1, answer2, answer3 = json.loads(request.data).get("answer1"), json.loads(request.data).get("answer2"), json.loads(request.data).get("answer3")
-            question = json.loads(request.data).get("question")
             survey_questions_and_answers.insert_one({
                 "_id": survey_questions_and_answers.count_documents({}) + 1,
                 "survey_id": int(survey_id),
-                "question": question,
-                "question_type": json.loads(request.data).get("question_type"),
+                "question": json.loads(request.data).get("question"),
+                "question_type": question_type,
                 "answers": {answer1: 0, answer2: 0, answer3: 0}
             })
-            return jsonify({"response": "success"})
+        elif question_type == "Open-ended":
+            survey_questions_and_answers.insert_one({
+                "_id": survey_questions_and_answers.count_documents({}) + 1,
+                "survey_id": int(survey_id),
+                "question": json.loads(request.data).get("question"),
+                "question_type": question_type,
+                "answers": []
+            })
+        elif question_type == "Close-ended":
+            survey_questions_and_answers.insert_one({
+                "_id": survey_questions_and_answers.count_documents({}) + 1,
+                "survey_id": int(survey_id),
+                "question": json.loads(request.data).get("question"),
+                "question_type": question_type,
+                "answers": {"yes": 0, "no": 0}
+            })
+        return jsonify({"response": "success"})
+    else:
+        return redirect("/")
 
+@app.route("/delete-question", methods=["GET", "POST"])
+@login_required
+def delete_question():
+    if request.method == "POST":
+        survey_questions_and_answers.delete_one({
+            "_id": int(json.loads(request.data).get("question_id"))
+        })
+        return jsonify({"response": "success"})
+    else:
+        return redirect("/")
+    
+@app.route("/add-survey", methods=["GET", "POST"])
+@login_required
+def add_survey():
+    return
 
 @app.route("/logout", methods=["GET", "POST"])
 def logout():
