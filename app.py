@@ -45,13 +45,8 @@ def after_request(response):
 @app.route("/")
 def welcome():
     if session.get("user_id") is not None:
-        return render_template("survey-list.html", survey_list=list(survey_list.find({"user_id": session["user_id"]})))
+        return render_template("survey-list.html", survey_list=list(survey_list.find({"user_id": session["user_id"]})), user_id=session["user_id"])
     return render_template("welcome.html")
-
-# @login_required
-# def index():
-#     print(list(survey_list.find({"user_id": session["user_id"]})))
-#     return render_template("survey-list.html", survey_list=list(survey_list.find({"user_id": session["user_id"]})))
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -199,7 +194,31 @@ def delete_question():
 @app.route("/add-survey", methods=["GET", "POST"])
 @login_required
 def add_survey():
-    return
+    if request.method == "POST":
+        survey_list.insert_one({
+            "_id": survey_list.count_documents({}) + 1,
+            "user_id": int(session["user_id"]),
+            "survey_name": json.loads(request.data).get("question")
+        })
+        return jsonify({"response": "success"})
+    else:
+        redirect("/")
+
+@app.route("/delete-survey", methods=["GET", "POST"])
+@login_required
+def delete_survey():
+    if request.method == "POST":
+        survey_id = int(json.loads(request.data).get("survey_id"))
+        survey_list.delete_one({
+            "_id": survey_id,
+            "user_id": int(session["user_id"])
+        })
+        survey_questions_and_answers.delete_many({
+            "survey_id": survey_id
+        })
+        return jsonify({"response": "success"})
+    else:
+        redirect("/")
 
 @app.route("/logout", methods=["GET", "POST"])
 def logout():

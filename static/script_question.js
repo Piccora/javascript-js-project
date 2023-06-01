@@ -7,8 +7,8 @@ let questionAdditionModal = document.getElementById("questionAdditionModal");
 let questionDeletionModal = document.getElementById("questionDeletionModal");
 
 // Get the <span> element that closes the modal
-let spanAddition = document.getElementsByClassName("closeAddition")[0];
-let spanDeletion = document.getElementsByClassName("closeDeletion")[0];
+let spanAddition = document.getElementById("closeAddition");
+let spanDeletion = document.getElementById("closeDeletion");
 
 // When the user clicks on <span> (x), close the modal
 spanAddition.onclick = function() {

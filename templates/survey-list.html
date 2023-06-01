@@ -23,7 +23,7 @@
         <li class="list-group-item pt-0 p-2 mb-2">
             <div class="d-flex align-items-center">
                 <div class="flex-grow-1">
-                    <h3 class="mb-0"><a href="make-new-survey" class="hovering-survey-link">New Survey</a></h3>
+                    <h3 class="mb-0"><a href="#" class="hovering-survey-link" onclick="confirmSurveyAddition(this)" value='{{ user_id }}'>New Survey</a></h3>
                 </div>
             </div>
         </li>
@@ -34,11 +34,27 @@
 
     <!-- Modal content -->
     <div class="modal-content">
-        <span class="close">&times;</span>
+        <span class="close" id="closeDeletion">&times;</span>
         <h3>Do you want to delete this survey?</h3>
         <div class="d-flex w-50 justify-content-between">
-            <button type="button" class="btn btn-success">Yes</button>
+            <button type="button" class="btn btn-success" onclick="deleteSurvey()">Yes</button>
             <button type="button" class="btn btn-danger" onclick="exitModal()">No</button>
+        </div>
+    </div>
+    </div>
+
+    <div id="surveyAdditionModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close" id="closeAddition">&times;</span>
+            <h3>Please enter the name of the new survey:</h3>
+            <div class="d-flex w-50">
+                <textarea class="form-control" placeholder="Enter your question here" id="question" rows="1"></textarea>
+            </div>
+            <div class="d-flex justify-content-between"></div>
+                <button type="button" class="btn btn-success" onclick="addSurvey()">Submit</button>
+            </div>
         </div>
     </div>
     <!-- TODO: Program the Yes button to delete the appropriate survey -->
