@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Input Code
+{% endblock %}
+
+{% block main %}
+<div class="text-center">
+    <form action="/survey" method="post">
+        <h3><label>Please enter the code:</label></h3>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" id="survey_code" name="survey_code" placeholder="Survey Code">
+        </div>
+        <button class="btn btn-primary" type="submit">Submit</button>
+    </form>
+</div>
+{% endblock %}

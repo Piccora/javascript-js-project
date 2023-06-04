@@ -5,10 +5,14 @@ let questionType;
 // Get the modal
 let questionAdditionModal = document.getElementById("questionAdditionModal");
 let questionDeletionModal = document.getElementById("questionDeletionModal");
+let surveyShareConfirmation = document.getElementById("surveyShareConfirmation");
+let surveyShareModal = document.getElementById("surveyShareModal");
 
 // Get the <span> element that closes the modal
 let spanAddition = document.getElementById("closeAddition");
 let spanDeletion = document.getElementById("closeDeletion");
+let spanShareConfirmation = document.getElementById("closeShareConfirmation");
+let spanShare = document.getElementById("closeShare");
 
 // When the user clicks on <span> (x), close the modal
 spanAddition.onclick = function() {
@@ -25,19 +29,32 @@ spanDeletion.onclick = function() {
   questionDeletionModal.style.display = "none";
   document.getElementById("buttonYes").style.display = "none";
   document.getElementById("buttonNo").style.display = "none";
+  questionId = undefined;
+}
+
+spanShareConfirmation.onclick = function() {
+  surveyShareConfirmation.style.display = "none";
+  surveyId = undefined;
+}
+
+spanShare.onclick = function() {
+  surveyShareModal.style.display = "none";
   surveyId = undefined;
 }
 
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
-  if (event.target == questionAdditionModal || event.target == questionDeletionModal) {
+  if (event.target == questionAdditionModal || event.target == questionDeletionModal || event.target == surveyShareConfirmation || event.target == surveyShareModal) {
     questionDeletionModal.style.display = "none";
     questionAdditionModal.style.display = "none";
+    surveyShareConfirmation.style.display = "none";
+    surveyShareModal.style.display = "none";
     document.getElementById("questionArea").value = "";
     document.getElementById("dropdownQuestionButton").innerHTML = "Dropdown button";
     document.getElementById("buttonYes").style.display = "none";
     document.getElementById("buttonNo").style.display = "none";
     surveyId = undefined;
+    questionId = undefined;
     renderQuestionStructure();
   }
 }
@@ -45,6 +62,12 @@ window.onclick = function(event) {
 function confirmQuestionDeletion(event) {
     questionDeletionModal.style.display = "block";
     questionId = event.getAttribute("value");
+}
+
+function confirmSurveySharing(event) {
+  surveyShareConfirmation.style.display = "block";
+  surveyId = event.getAttribute("value");
+  console.log(surveyId)
 }
 
 function renderQuestionModal(event) {
@@ -55,6 +78,7 @@ function renderQuestionModal(event) {
 function exitModal() {
   questionDeletionModal.style.display = "none";
   questionAdditionModal.style.display = "none";
+  surveyShareConfirmation.style.display = "none";
   document.getElementById("buttonYes").style.display = "none";
   document.getElementById("buttonNo").style.display = "none";
   document.getElementById("questionArea").value = "";
@@ -208,3 +232,24 @@ function deleteQuestion() {
     }});
 }
 // TODO: Refactor code
+
+function shareSurvey() {
+  $.ajax({
+    type: "POST",
+    url: "/return-survey-code",
+    async: false,
+    contentType: "application/json",
+    data: JSON.stringify({ survey_id: surveyId }),
+    success: function(response) {
+      document.getElementById("survey_share").innerHTML = "";
+      console.log("response: " + response["response"]);
+      let survey_link = document.createElement("h3");
+      let survey_code = document.createElement("h3");
+      survey_link.innerHTML = `<h3>Here's the link to do the survey: "link"/${response["survey_code"]}</h3>`
+      survey_code.innerHTML = `<h3>Or you can use this code in the "Do a survey" section: ${response["survey_code"]}</h3>`
+      document.getElementById("survey_share").appendChild(survey_link);
+      document.getElementById("survey_share").appendChild(survey_code);
+      surveyShareConfirmation.style.display = "none";
+      surveyShareModal.style.display = "block";
+    }});
+}

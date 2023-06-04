@@ -3,8 +3,10 @@ import time
 import certifi
 import bcrypt
 import json
+import string
+import secrets
 
-from flask import Flask, flash, redirect, render_template, request, session, make_response, jsonify
+from flask import Flask, flash, redirect, render_template, request, session, make_response, jsonify, url_for
 from flask_session import Session
 from tempfile import mkdtemp
 from pymongo.mongo_client import MongoClient
@@ -45,7 +47,7 @@ def after_request(response):
 @app.route("/")
 def welcome():
     if session.get("user_id") is not None:
-        return render_template("survey-list.html", survey_list=list(survey_list.find({"user_id": session["user_id"]})), user_id=session["user_id"])
+        return render_template("survey-list.html", survey_list=list(survey_list.find({"user_id": session["user_id"]})), user_id=session["user_id"], username=users.find_one({"_id": session["user_id"]})["username"])
     return render_template("welcome.html")
 
 @app.route("/login", methods=["GET", "POST"])
@@ -139,11 +141,11 @@ def register():
     else:
         return render_template("register.html")
     
-@app.route("/render-questions/<survey_code>", methods=["GET", "POST"])
+@app.route("/render-questions/<survey_id>", methods=["GET", "POST"])
 @login_required
-def render_questions(survey_code=0):
+def render_questions(survey_id=0):
     if request.method == "GET":
-        return render_template("survey-questions.html", questions=list(survey_questions_and_answers.find({"survey_id": int(survey_code)})), survey_id=int(survey_code))
+        return render_template("survey-questions.html", questions=list(survey_questions_and_answers.find({"survey_id": int(survey_id)})), survey_id=int(survey_id))
 
 @app.route("/add-question", methods=["GET", "POST"])
 @login_required
@@ -174,7 +176,7 @@ def add_question():
                 "survey_id": int(survey_id),
                 "question": json.loads(request.data).get("question"),
                 "question_type": question_type,
-                "answers": {"yes": 0, "no": 0}
+                "answers": {"Yes": 0, "No": 0}
             })
         return jsonify({"response": "success"})
     else:
@@ -195,10 +197,15 @@ def delete_question():
 @login_required
 def add_survey():
     if request.method == "POST":
+        while True:
+            survey_code = ''.join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(6))
+            if survey_list.find_one({"survey_code": survey_code}) is None:
+                break
         survey_list.insert_one({
             "_id": survey_list.count_documents({}) + 1,
             "user_id": int(session["user_id"]),
-            "survey_name": json.loads(request.data).get("question")
+            "survey_name": json.loads(request.data).get("question"),
+            "survey_code": survey_code
         })
         return jsonify({"response": "success"})
     else:
@@ -219,6 +226,47 @@ def delete_survey():
         return jsonify({"response": "success"})
     else:
         redirect("/")
+
+@app.route("/survey", methods=["GET", "POST"])
+@app.route("/survey/<survey_code>", methods=["GET", "POST"])
+def survey(survey_code=None):
+    if request.method == "GET":
+        if survey_code is None:
+            return render_template("input-code.html")
+        survey = survey_list.find_one({"survey_code": survey_code})
+        if survey is None:
+            return render_template("apology.html")
+        return render_template("render-survey.html", questions=list(survey_questions_and_answers.find({"survey_id": survey["_id"]})), survey_code=survey_code)
+    else:
+        if survey_code is None:
+            return redirect(url_for("survey", survey_code=str(request.form.get("survey_code"))))
+        survey = survey_list.find_one({"survey_code": survey_code})
+        if survey is None:
+            return render_template("apology.html")
+        survey_id = survey["_id"]
+        question_id_list = [question["_id"] for question in list(survey_questions_and_answers.find({"survey_id": survey_id}))]
+        for question_id in question_id_list:
+            question_type = survey_questions_and_answers.find_one({"_id": question_id})["question_type"]
+            if question_type == "MCQ" or question_type == "Close-ended":
+                answer = request.form.get("question" + str(question_id))
+                if answer is not None:
+                    survey_questions_and_answers.update_one({"_id": question_id}, { "$inc": {"answers.{}".format(answer): 1}})
+            elif question_type == "Checkbox":
+                answers = request.form.getlist("question" + str(question_id))
+                for answer in answers:
+                    survey_questions_and_answers.update_one({"_id": question_id}, { "$inc": {"answers.{}".format(answer): 1}})
+            elif question_type == "Open-ended":
+                answer = request.form.get("question" + str(question_id))
+                if answer.strip() != "":
+                    survey_questions_and_answers.update_one({"_id": question_id}, { "$push": {"answers": answer}})
+        # TODO: Redirect user to a successful survey completion page, not the homepage
+        return redirect("/")
+
+@app.route("/return-survey-code", methods=["GET", "POST"])
+@login_required
+def return_code():
+    if request.method == "POST":
+        return jsonify({"survey_code": survey_list.find_one({"_id": int(json.loads(request.data).get("survey_id"))})["survey_code"], "response": "success"})
 
 @app.route("/logout", methods=["GET", "POST"])
 def logout():
