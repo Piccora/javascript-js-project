@@ -37,7 +37,6 @@ function confirmSurveyDeletion(event) {
 }
 
 function confirmSurveyAddition(event) {
-  console.log("test");
   surveyAdditionModal.style.display = "block";
   userId = event.getAttribute("value");
 }
@@ -55,7 +54,7 @@ function deleteSurvey() {
     contentType: "application/json",
     data: JSON.stringify({ survey_id: surveyId }),
     success: function(response) {
-      console.log(response);
+      console.log("response: " + response["response"]);
       location.reload();
     }
   })
@@ -69,7 +68,7 @@ function addSurvey() {
     contentType: "application/json",
     data: JSON.stringify({ question: document.getElementById("question").value }),
     success: function(response) {
-      console.log(response);
+      console.log("response: " + response["response"]);
       location.reload();
     }
   })

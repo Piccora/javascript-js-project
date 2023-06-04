@@ -267,6 +267,20 @@ def survey(survey_code=None):
 def return_code():
     if request.method == "POST":
         return jsonify({"survey_code": survey_list.find_one({"_id": int(json.loads(request.data).get("survey_id"))})["survey_code"], "response": "success"})
+    else:
+        redirect("/")
+
+@app.route("/survey-analytic/<survey_id>", methods=["GET", "POST"])
+@login_required
+def survey_analytic(survey_id=0):
+    if request.method == "GET":
+        return render_template("survey-analytic.html", questions=list(survey_questions_and_answers.find({"survey_id": int(survey_id)})), survey_id=survey_id)
+    
+@app.route("/render-charts", methods=["GET", "POST"])
+@login_required
+def render_charts():
+    if request.method == "POST":
+        return jsonify({"survey_questions_and_answers": list(survey_questions_and_answers.find({"survey_id": int(json.loads(request.data).get("survey_id"))})), "response": "success"})
 
 @app.route("/logout", methods=["GET", "POST"])
 def logout():

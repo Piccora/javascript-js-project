@@ -72,8 +72,10 @@ __pycache__
 # flask_session
 flask_session
 
-# test.py
-test.py
+# ignore node.js stuff
+node_modules
+package-lock.json
+package.json
 
 # .venv
 .venv

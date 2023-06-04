@@ -24,7 +24,7 @@
             <a class="nav-link" href="#" onclick="confirmSurveySharing(this)" value="{{ survey_id }}">Share Survey</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Survey Analytic</a>
+            <a class="nav-link" href="/survey-analytic/{{ survey_id }}">Survey Analytic</a>
           </li>
         </ul>
       </div>
@@ -36,8 +36,7 @@
       {% for question in questions %}
       {% if question["question_type"] == "Open-ended" %}
       <li class="list-group-item pt-0 p-2 mb-4">
-        <div class="">
-          <div class="">
+          <div>
             <h3 class="mb-0">Question: {{ question["question"] }}</h3>
           </div>
           <div class="d-flex align-items-center justify-content-between">
@@ -54,8 +53,8 @@
       </li>
       {% elif question["question_type"] == "Close-ended" %}
       <li class="list-group-item pt-0 p-2 mb-4">
-        <div class="">
-          <div class="">
+        <div>
+          <div>
             <h3 class="mb-0">Question: {{ question["question"] }}</h3>
           </div>
           <div class="d-flex align-items-center justify-content-between">
@@ -81,8 +80,8 @@
       </li>
       {% elif question["question_type"] == "MCQ" %}
       <li class="list-group-item pt-0 p-2 mb-4">
-        <div class="">
-          <div class="">
+        <div>
+          <div>
             <h3 class="mb-0">Question: {{ question["question"] }}</h3>
           </div>
           <div class="d-flex align-items-center justify-content-between">
@@ -104,8 +103,8 @@
       </li>
       {% else %}
       <li class="list-group-item pt-0 p-2 mb-4">
-        <div class="">
-          <div class="">
+        <div>
+          <div>
             <h3 class="mb-0">Question: {{ question["question"] }}</h3>
           </div>
           <div class="d-flex align-items-center justify-content-between">
@@ -123,8 +122,10 @@
               <button type="button" class="btn btn-primary" onclick="confirmQuestionDeletion(this)" value='{{ question["_id"] }}'>Delete</button>
             </span>
           </div>
-          {% endif %}
-          {% endfor %}
+        </div>
+      </li>
+      {% endif %}
+      {% endfor %}
       <li class="list-group-item pt-0 p-2 mb-4">
         <div class="d-flex align-items-center">
           <div class="flex-grow-1">
@@ -135,10 +136,8 @@
       </li>
     </ul>
 
-    <!-- The Modal -->
     <div id="questionAdditionModal" class="modal">
 
-      <!-- Modal content -->
       <div class="modal-content">
         <span class="close" id="closeAddition">&times;</span>
         <div class="form-group">
@@ -147,7 +146,7 @@
         <div class="form-group dropdown">
           <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownQuestionButton"
             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Dropdown button
+            Question Type
           </button>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
             <a class="dropdown-item" href="#" onclick="replaceDropdownText(this), renderQuestionStructure()" value="Multiple Choice Question">Multiple
@@ -171,10 +170,8 @@
       </div>
     </div>
 
-    <!-- The Modal -->
     <div id="questionDeletionModal" class="modal">
 
-      <!-- Modal content -->
       <div class="modal-content">
           <span class="close" id="closeDeletion">&times;</span>
           <h3>Do you want to delete this question?</h3>
@@ -185,10 +182,8 @@
       </div>
     </div>
 
-    <!-- The Modal -->
     <div id="surveyShareConfirmation" class="modal">
 
-      <!-- Modal content -->
       <div class="modal-content">
           <span class="close" id="closeShareConfirmation">&times;</span>
           <h3>Do you want to share this survey? Please make sure you have added all the questions and answers.</h3>
@@ -201,7 +196,6 @@
 
     <div id="surveyShareModal" class="modal">
 
-      <!-- Modal content -->
       <div class="modal-content">
           <span class="close" id="closeShare">&times;</span>
           <div id="survey_share"></div>

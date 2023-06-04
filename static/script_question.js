@@ -18,7 +18,7 @@ let spanShare = document.getElementById("closeShare");
 spanAddition.onclick = function() {
   questionAdditionModal.style.display = "none";
   document.getElementById("questionArea").value = "";
-  document.getElementById("dropdownQuestionButton").innerHTML = "Dropdown button";
+  document.getElementById("dropdownQuestionButton").innerHTML = "Question Type";
   document.getElementById("buttonYes").style.display = "none";
   document.getElementById("buttonNo").style.display = "none";
   surveyId = undefined;
@@ -50,7 +50,7 @@ window.onclick = function(event) {
     surveyShareConfirmation.style.display = "none";
     surveyShareModal.style.display = "none";
     document.getElementById("questionArea").value = "";
-    document.getElementById("dropdownQuestionButton").innerHTML = "Dropdown button";
+    document.getElementById("dropdownQuestionButton").innerHTML = "Question Type";
     document.getElementById("buttonYes").style.display = "none";
     document.getElementById("buttonNo").style.display = "none";
     surveyId = undefined;
@@ -67,7 +67,6 @@ function confirmQuestionDeletion(event) {
 function confirmSurveySharing(event) {
   surveyShareConfirmation.style.display = "block";
   surveyId = event.getAttribute("value");
-  console.log(surveyId)
 }
 
 function renderQuestionModal(event) {
@@ -82,7 +81,7 @@ function exitModal() {
   document.getElementById("buttonYes").style.display = "none";
   document.getElementById("buttonNo").style.display = "none";
   document.getElementById("questionArea").value = "";
-  document.getElementById("dropdownQuestionButton").innerHTML = "Dropdown button";
+  document.getElementById("dropdownQuestionButton").innerHTML = "Question Type";
   renderQuestionStructure();
   surveyId = undefined;
 }
@@ -94,7 +93,11 @@ function replaceDropdownText(event) {
 function renderQuestionStructure() {
   questionType = document.getElementById("dropdownQuestionButton").innerHTML;
   document.getElementById("questionChoices").innerHTML = ""
-  if (questionType == "Multiple Choice Question") {
+  if (questionType != "Question Type") {
+    document.getElementById("buttonYes").style.display = "block";
+    document.getElementById("buttonNo").style.display = "block";
+  }
+  if (questionType === "Multiple Choice Question") {
     document.getElementById("questionChoices").innerHTML += `
     <div class="form-check">
       <input class="form-check-input" type="radio">
@@ -109,9 +112,7 @@ function renderQuestionStructure() {
       <textarea class="form-control" placeholder="Enter an answer here" id="answer3" rows="1"></textarea>
     </div>
     `
-    document.getElementById("buttonYes").style.display = "block";
-    document.getElementById("buttonNo").style.display = "block";
-  } else if (questionType == "Checkbox Question") {
+  } else if (questionType === "Checkbox Question") {
     document.getElementById("questionChoices").innerHTML += `
     <div class="form-check">
       <input class="form-check-input" type="checkbox">
@@ -126,17 +127,13 @@ function renderQuestionStructure() {
       <textarea class="form-control" placeholder="Enter an answer here" id="answer3" rows="1"></textarea>
     </div>
     `
-    document.getElementById("buttonYes").style.display = "block";
-    document.getElementById("buttonNo").style.display = "block";
-  } else if (questionType == "Open-ended Question") {
+  } else if (questionType === "Open-ended Question") {
     document.getElementById("questionChoices").innerHTML += `
     <div class="form-group">
       <textarea class="form-control" id="exampleFormControlTextarea1" id="answer" rows="3"></textarea>
     </div>
     `
-    document.getElementById("buttonYes").style.display = "block";
-    document.getElementById("buttonNo").style.display = "block";
-  } else if (questionType == "Close-ended Question") {
+  } else if (questionType === "Close-ended Question") {
     document.getElementById("questionChoices").innerHTML += `
     <div class="form-check">
       <input class="form-check-input" type="radio" value="option1">
@@ -151,69 +148,38 @@ function renderQuestionStructure() {
       </label>
     </div>
     `
-    document.getElementById("buttonYes").style.display = "block";
-    document.getElementById("buttonNo").style.display = "block";
   }
-  
 }
 
 function addQuestion() {
-  if (questionType == "Multiple Choice Question") {
+  let questionTypeObject = {"Multiple Choice Question": "MCQ", "Checkbox Question": "Checkbox", "Open-ended Question": "Open-ended", "Close-ended Question": "Close-ended"};
+  if (["Multiple Choice Question", "Checkbox Question"].includes(questionType)) {
     $.ajax({
       type: "POST",
       url: "/add-question",
       async: false,
       contentType: "application/json",
       data: JSON.stringify({ question: document.getElementById("questionArea").value,
-              question_type: "MCQ",
+              question_type: questionTypeObject[questionType],
               survey_id: surveyId,
               answer1: document.getElementById("answer1").value,
               answer2: document.getElementById("answer2").value,
               answer3: document.getElementById("answer3").value }),
       success: function(response) {
-        console.log(response);
+        console.log("response: " + response["response"]);
         location.reload();
-      }});
-  } else if (questionType == "Checkbox Question") {
+    }});
+  } else if (["Open-ended Question", "Close-ended Question"]) {
     $.ajax({
       type: "POST",
       url: "/add-question",
       async: false,
       contentType: "application/json",
       data: JSON.stringify({ question: document.getElementById("questionArea").value,
-              question_type: "Checkbox",
-              survey_id: surveyId,
-              answer1: document.getElementById("answer1").value,
-              answer2: document.getElementById("answer2").value,
-              answer3: document.getElementById("answer3").value }),
-      success: function(response) {
-        console.log(response);
-        location.reload();
-      }});
-  } else if (questionType == "Open-ended Question") {
-    $.ajax({
-      type: "POST",
-      url: "/add-question",
-      async: false,
-      contentType: "application/json",
-      data: JSON.stringify({ question: document.getElementById("questionArea").value,
-              question_type: "Open-ended",
+              question_type: questionTypeObject[questionType],
               survey_id: surveyId }),
       success: function(response) {
-        console.log(response);
-        location.reload();
-      }});
-  } else if (questionType == "Close-ended Question") {
-    $.ajax({
-      type: "POST",
-      url: "/add-question",
-      async: false,
-      contentType: "application/json",
-      data: JSON.stringify({ question: document.getElementById("questionArea").value,
-              question_type: "Close-ended",
-              survey_id: surveyId }),
-      success: function(response) {
-        console.log(response);
+        console.log("response: " + response["response"]);
         location.reload();
       }});
   }
@@ -227,11 +193,10 @@ function deleteQuestion() {
     contentType: "application/json",
     data: JSON.stringify({ question_id: questionId }),
     success: function(response) {
-      console.log(response);
+      console.log("response: " + response["response"]);
       location.reload();
     }});
 }
-// TODO: Refactor code
 
 function shareSurvey() {
   $.ajax({
