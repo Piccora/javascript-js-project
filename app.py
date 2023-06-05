@@ -53,6 +53,7 @@ def welcome():
             int(survey["_id"])
             for survey in list(survey_list.find({"user_id": session["user_id"]}))
         ]
+        print(authorized_surveys)
         return render_template(
             "survey-list.html",
             survey_list=list(survey_list.find({"user_id": session["user_id"]})),
@@ -163,6 +164,7 @@ def register():
 @login_required
 def render_questions(survey_id=0):
     if request.method == "GET":
+        print(survey_id)
         if int(survey_id) not in authorized_surveys:
             return apology("unauthorized access to survey", 403)
         return render_template(
