@@ -33,8 +33,6 @@ db = client["survey-database"]
 users = db["user"]
 survey_list = db["survey-list"]
 survey_questions_and_answers = db["survey-questions-and-answers"]
-authorized_surveys = []
-
 
 @app.after_request
 def after_request(response):
@@ -47,13 +45,7 @@ def after_request(response):
 
 @app.route("/")
 def welcome():
-    global authorized_surveys
     if session.get("user_id") is not None:
-        authorized_surveys = [
-            int(survey["_id"])
-            for survey in list(survey_list.find({"user_id": session["user_id"]}))
-        ]
-        print(authorized_surveys)
         return render_template(
             "survey-list.html",
             survey_list=list(survey_list.find({"user_id": session["user_id"]})),
@@ -66,7 +58,6 @@ def welcome():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """Log user in"""
-    global authorized_surveys
 
     # Forget any user_id
     session.clear()
@@ -90,11 +81,6 @@ def login():
 
         # Remember which user has logged in
         session["user_id"] = user["_id"]
-
-        authorized_surveys = [
-            int(survey["_id"])
-            for survey in list(survey_list.find({"user_id": session["user_id"]}))
-        ]
 
         # Redirect user to home page
         return redirect("/")
@@ -164,7 +150,10 @@ def register():
 @login_required
 def render_questions(survey_id=0):
     if request.method == "GET":
-        print(survey_id)
+        authorized_surveys = [
+            int(survey["_id"])
+            for survey in list(survey_list.find({"user_id": session["user_id"]}))
+        ]
         if int(survey_id) not in authorized_surveys:
             return apology("unauthorized access to survey", 403)
         return render_template(
@@ -239,7 +228,6 @@ def delete_question():
 @app.route("/add-survey", methods=["GET", "POST"])
 @login_required
 def add_survey():
-    global authorized_surveys
     if request.method == "POST":
         while True:
             survey_code = "".join(
@@ -255,10 +243,6 @@ def add_survey():
                 "survey_code": survey_code,
             }
         )
-        authorized_surveys = [
-            int(survey["_id"])
-            for survey in list(survey_list.find({"user_id": session["user_id"]}))
-        ]
         return jsonify({"response": "success"})
     else:
         return redirect("/")
@@ -358,8 +342,11 @@ def return_code():
 @login_required
 def survey_analytic(survey_id=0):
     if request.method == "GET":
-        print(survey_id)
-        if survey_id not in authorized_surveys:
+        authorized_surveys = [
+            int(survey["_id"])
+            for survey in list(survey_list.find({"user_id": session["user_id"]}))
+        ]
+        if int(survey_id) not in authorized_surveys:
             return apology("unauthorized access to survey", 403)
         return render_template(
             "survey-analytic.html",
