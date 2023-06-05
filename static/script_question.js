@@ -15,7 +15,7 @@ let spanShareConfirmation = document.getElementById("closeShareConfirmation");
 let spanShare = document.getElementById("closeShare");
 
 // When the user clicks on <span> (x), close the modal
-spanAddition.onclick = function() {
+spanAddition.onclick = function () {
   questionAdditionModal.style.display = "none";
   document.getElementById("questionArea").value = "";
   document.getElementById("dropdownQuestionButton").innerHTML = "Question Type";
@@ -25,25 +25,25 @@ spanAddition.onclick = function() {
   renderQuestionStructure();
 }
 
-spanDeletion.onclick = function() {
+spanDeletion.onclick = function () {
   questionDeletionModal.style.display = "none";
-  document.getElementById("buttonYes").style.display = "none";
-  document.getElementById("buttonNo").style.display = "none";
+  // document.getElementById("buttonYes").style.display = "none";
+  // document.getElementById("buttonNo").style.display = "none";
   questionId = undefined;
 }
 
-spanShareConfirmation.onclick = function() {
+spanShareConfirmation.onclick = function () {
   surveyShareConfirmation.style.display = "none";
   surveyId = undefined;
 }
 
-spanShare.onclick = function() {
+spanShare.onclick = function () {
   surveyShareModal.style.display = "none";
   surveyId = undefined;
 }
 
 // When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
+window.onclick = function (event) {
   if (event.target == questionAdditionModal || event.target == questionDeletionModal || event.target == surveyShareConfirmation || event.target == surveyShareModal) {
     questionDeletionModal.style.display = "none";
     questionAdditionModal.style.display = "none";
@@ -60,8 +60,8 @@ window.onclick = function(event) {
 }
 
 function confirmQuestionDeletion(event) {
-    questionDeletionModal.style.display = "block";
-    questionId = event.getAttribute("value");
+  questionDeletionModal.style.display = "block";
+  questionId = event.getAttribute("value");
 }
 
 function confirmSurveySharing(event) {
@@ -152,36 +152,42 @@ function renderQuestionStructure() {
 }
 
 function addQuestion() {
-  let questionTypeObject = {"Multiple Choice Question": "MCQ", "Checkbox Question": "Checkbox", "Open-ended Question": "Open-ended", "Close-ended Question": "Close-ended"};
+  let questionTypeObject = { "Multiple Choice Question": "MCQ", "Checkbox Question": "Checkbox", "Open-ended Question": "Open-ended", "Close-ended Question": "Close-ended" };
   if (["Multiple Choice Question", "Checkbox Question"].includes(questionType)) {
     $.ajax({
       type: "POST",
       url: "/add-question",
       async: false,
       contentType: "application/json",
-      data: JSON.stringify({ question: document.getElementById("questionArea").value,
-              question_type: questionTypeObject[questionType],
-              survey_id: surveyId,
-              answer1: document.getElementById("answer1").value,
-              answer2: document.getElementById("answer2").value,
-              answer3: document.getElementById("answer3").value }),
-      success: function(response) {
+      data: JSON.stringify({
+        question: document.getElementById("questionArea").value,
+        question_type: questionTypeObject[questionType],
+        survey_id: surveyId,
+        answer1: document.getElementById("answer1").value,
+        answer2: document.getElementById("answer2").value,
+        answer3: document.getElementById("answer3").value
+      }),
+      success: function (response) {
         console.log("response: " + response["response"]);
         location.reload();
-    }});
+      }
+    });
   } else if (["Open-ended Question", "Close-ended Question"]) {
     $.ajax({
       type: "POST",
       url: "/add-question",
       async: false,
       contentType: "application/json",
-      data: JSON.stringify({ question: document.getElementById("questionArea").value,
-              question_type: questionTypeObject[questionType],
-              survey_id: surveyId }),
-      success: function(response) {
+      data: JSON.stringify({
+        question: document.getElementById("questionArea").value,
+        question_type: questionTypeObject[questionType],
+        survey_id: surveyId
+      }),
+      success: function (response) {
         console.log("response: " + response["response"]);
         location.reload();
-      }});
+      }
+    });
   }
 }
 
@@ -192,10 +198,11 @@ function deleteQuestion() {
     async: false,
     contentType: "application/json",
     data: JSON.stringify({ question_id: questionId }),
-    success: function(response) {
+    success: function (response) {
       console.log("response: " + response["response"]);
       location.reload();
-    }});
+    }
+  });
 }
 
 function shareSurvey() {
@@ -205,16 +212,17 @@ function shareSurvey() {
     async: false,
     contentType: "application/json",
     data: JSON.stringify({ survey_id: surveyId }),
-    success: function(response) {
+    success: function (response) {
       document.getElementById("survey_share").innerHTML = "";
       console.log("response: " + response["response"]);
       let survey_link = document.createElement("h3");
       let survey_code = document.createElement("h3");
-      survey_link.innerHTML = `<h3>Here's the link to do the survey: "link"/${response["survey_code"]}</h3>`
+      survey_link.innerHTML = `<h3>Here's the link to do the survey: https://portfolio-javascript-project.onrender.com/survey/${response["survey_code"]}</h3>`
       survey_code.innerHTML = `<h3>Or you can use this code in the "Do a survey" section: ${response["survey_code"]}</h3>`
       document.getElementById("survey_share").appendChild(survey_link);
       document.getElementById("survey_share").appendChild(survey_code);
       surveyShareConfirmation.style.display = "none";
       surveyShareModal.style.display = "block";
-    }});
+    }
+  });
 }

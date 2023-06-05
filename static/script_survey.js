@@ -10,24 +10,23 @@ let spanDeletion = document.getElementById("closeDeletion");
 let spanAddition = document.getElementById("closeAddition");
 
 // When the user clicks on <span> (x), close the modal
-spanDeletion.onclick = function() {
-  surveyAdditionModal.style.display = "none";
+spanDeletion.onclick = function () {
   surveyDeletionModal.style.display = "none";
   surveyId = undefined;
 }
 
-spanAddition.onclick = function() {
+spanAddition.onclick = function () {
   surveyAdditionModal.style.display = "none";
-  surveyDeletionModal.style.display = "none";
-  surveyId = undefined;
+  userId = undefined;
 }
 
 // When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
+window.onclick = function (event) {
   if (event.target == surveyDeletionModal || event.target == surveyAdditionModal) {
     surveyAdditionModal.style.display = "none";
     surveyDeletionModal.style.display = "none";
     surveyId = undefined;
+    userId = undefined;
   }
 }
 
@@ -53,7 +52,7 @@ function deleteSurvey() {
     async: false,
     contentType: "application/json",
     data: JSON.stringify({ survey_id: surveyId }),
-    success: function(response) {
+    success: function (response) {
       console.log("response: " + response["response"]);
       location.reload();
     }
@@ -67,7 +66,7 @@ function addSurvey() {
     async: false,
     contentType: "application/json",
     data: JSON.stringify({ question: document.getElementById("question").value }),
-    success: function(response) {
+    success: function (response) {
       console.log("response: " + response["response"]);
       location.reload();
     }

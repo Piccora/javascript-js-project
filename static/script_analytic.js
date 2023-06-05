@@ -7,9 +7,10 @@ function getQuestions() {
     async: false,
     contentType: "application/json",
     data: JSON.stringify({ survey_id: document.getElementById("survey_return").getAttribute("value") }),
-    success: function(response) {
-      console.log(response["response"]);
-      surveyQuestionsAndAnswers = response["survey_questions_and_answers"]
+    success: function (response) {
+      console.log("response: " + response["response"]);
+      let surveyQuestionsAndAnswers = response["survey_questions_and_answers"];
+      let questionType;
       surveyQuestionsAndAnswers.forEach(element => {
         questionType = element["question_type"]
         if (["MCQ", "Checkbox"].includes(questionType)) {
@@ -36,7 +37,8 @@ function getQuestions() {
           });
         }
       });
-    }});
+    }
+  });
 }
 
 getQuestions();
