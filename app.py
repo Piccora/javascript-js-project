@@ -318,8 +318,7 @@ def survey(survey_code=None):
                     survey_questions_and_answers.update_one(
                         {"_id": question_id}, {"$push": {"answers": answer}}
                     )
-        # TODO: Redirect user to a successful survey completion page, not the homepage
-        return redirect("/")
+        return render_template("survey-completion.html")
 
 
 @app.route("/return-survey-code", methods=["GET", "POST"])
