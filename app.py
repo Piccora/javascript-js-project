@@ -379,7 +379,7 @@ def render_charts():
 @app.route("/logout", methods=["GET", "POST"])
 def logout():
     session.clear()
-    return render_template("login.html")
+    return redirect("/")
 
 
 if __name__ == "__main__":
