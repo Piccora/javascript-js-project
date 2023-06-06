@@ -133,12 +133,8 @@ def register():
             }
         )
 
-        time.sleep(5)
-
         # Remember which user has logged in
-        session["user_id"] = list(
-            users.find({"username": request.form.get("username").strip()})
-        )[0]["_id"]
+        session["user_id"] = users.find_one({"username": request.form.get("username").strip()})["_id"]
 
         # Redirect user to home page
         return redirect("/")
