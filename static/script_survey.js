@@ -65,10 +65,14 @@ function addSurvey() {
     url: "/add-survey",
     async: false,
     contentType: "application/json",
-    data: JSON.stringify({ question: document.getElementById("question").value }),
+    data: JSON.stringify({ question: document.getElementById("question").value.trim() }),
     success: function (response) {
       console.log("response: " + response["response"]);
-      location.reload();
+      if (response["response"] === "success") {
+        location.reload();
+      } else {
+        $("*").html(response["page"]);
+      }
     }
   })
 }

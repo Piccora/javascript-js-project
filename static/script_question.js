@@ -27,8 +27,6 @@ spanAddition.onclick = function () {
 
 spanDeletion.onclick = function () {
   questionDeletionModal.style.display = "none";
-  // document.getElementById("buttonYes").style.display = "none";
-  // document.getElementById("buttonNo").style.display = "none";
   questionId = undefined;
 }
 
@@ -100,49 +98,49 @@ function renderQuestionStructure() {
   if (questionType === "Multiple Choice Question") {
     document.getElementById("questionChoices").innerHTML += `
     <div class="form-check">
-      <input class="form-check-input" type="radio">
+      <input class="form-check-input" type="radio" disabled>
       <textarea class="form-control" placeholder="Enter an answer here" id="answer1" rows="1"></textarea>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="radio">
+      <input class="form-check-input" type="radio" disabled>
       <textarea class="form-control" placeholder="Enter an answer here" id="answer2" rows="1"></textarea>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="radio">
+      <input class="form-check-input" type="radio" disabled>
       <textarea class="form-control" placeholder="Enter an answer here" id="answer3" rows="1"></textarea>
     </div>
     `
   } else if (questionType === "Checkbox Question") {
     document.getElementById("questionChoices").innerHTML += `
     <div class="form-check">
-      <input class="form-check-input" type="checkbox">
+      <input class="form-check-input" type="checkbox" disabled>
       <textarea class="form-control" placeholder="Enter an answer here" id="answer1" rows="1"></textarea>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox">
+      <input class="form-check-input" type="checkbox" disabled>
       <textarea class="form-control" placeholder="Enter an answer here" id="answer2" rows="1"></textarea>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox">
+      <input class="form-check-input" type="checkbox" disabled>
       <textarea class="form-control" placeholder="Enter an answer here" id="answer3" rows="1"></textarea>
     </div>
     `
   } else if (questionType === "Open-ended Question") {
     document.getElementById("questionChoices").innerHTML += `
     <div class="form-group">
-      <textarea class="form-control" id="exampleFormControlTextarea1" id="answer" rows="3"></textarea>
+      <textarea class="form-control" id="exampleFormControlTextarea1" id="answer" rows="3" disabled></textarea>
     </div>
     `
   } else if (questionType === "Close-ended Question") {
     document.getElementById("questionChoices").innerHTML += `
     <div class="form-check">
-      <input class="form-check-input" type="radio" value="option1">
+      <input class="form-check-input" type="radio" disabled>
       <label class="form-check-label">
         Yes
       </label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="radio" value="option2">
+      <input class="form-check-input" type="radio" disabled>
       <label class="form-check-label">
         No
       </label>
@@ -160,16 +158,20 @@ function addQuestion() {
       async: false,
       contentType: "application/json",
       data: JSON.stringify({
-        question: document.getElementById("questionArea").value,
+        question: document.getElementById("questionArea").value.trim(),
         question_type: questionTypeObject[questionType],
         survey_id: surveyId,
-        answer1: document.getElementById("answer1").value,
-        answer2: document.getElementById("answer2").value,
-        answer3: document.getElementById("answer3").value
+        answer1: document.getElementById("answer1").value.trim(),
+        answer2: document.getElementById("answer2").value.trim(),
+        answer3: document.getElementById("answer3").value.trim()
       }),
       success: function (response) {
         console.log("response: " + response["response"]);
-        location.reload();
+        if (response["response"] === "success") {
+          location.reload();
+        } else {
+          $("*").html(response["page"]);
+        }
       }
     });
   } else if (["Open-ended Question", "Close-ended Question"]) {
@@ -179,13 +181,17 @@ function addQuestion() {
       async: false,
       contentType: "application/json",
       data: JSON.stringify({
-        question: document.getElementById("questionArea").value,
+        question: document.getElementById("questionArea").value.trim(),
         question_type: questionTypeObject[questionType],
         survey_id: surveyId
       }),
       success: function (response) {
         console.log("response: " + response["response"]);
-        location.reload();
+        if (response["response"] === "success") {
+          location.reload();
+        } else {
+          $("*").html(response["page"]);
+        }
       }
     });
   }
