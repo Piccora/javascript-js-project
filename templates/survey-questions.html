@@ -21,7 +21,8 @@
       <div class="d-flex">
         <ul class="navbar-nav me-auto mb-4 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link text-white" href="javascript: void(0)" onclick="confirmSurveySharing(this)" value="{{ survey_id }}">Share Survey</a>
+            <a class="nav-link text-white" href="javascript: void(0)" onclick="confirmSurveySharing(this)"
+              value="{{ survey_id }}">Share Survey</a>
           </li>
           <li class="nav-item">
             <a class="nav-link text-white" href="/survey-analytic/{{ survey_id }}">Survey Analytic</a>
@@ -133,8 +134,8 @@
       <li class="list-group-item pt-0 p-2 mb-4">
         <div class="d-flex align-items-center">
           <div class="flex-grow-1">
-            <h3 class="mb-0"><a href="javascript: void(0)" class="hovering-survey-link" onclick="renderQuestionModal(this)"
-                value="{{ survey_id }}">New Question</a></h3>
+            <h3 class="mb-0"><a href="javascript: void(0)" class="hovering-survey-link"
+                onclick="renderQuestionModal(this)" value="{{ survey_id }}">New Question</a></h3>
           </div>
         </div>
       </li>
@@ -153,17 +154,17 @@
             Question Type
           </button>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a class="dropdown-item" href="javascript: void(0)" onclick="replaceDropdownText(this), renderQuestionStructure()"
-              value="Multiple Choice Question">Multiple
+            <a class="dropdown-item" href="javascript: void(0)"
+              onclick="replaceDropdownText(this), renderQuestionStructure()" value="Multiple Choice Question">Multiple
               Choice Question</a>
-            <a class="dropdown-item" href="javascript: void(0)" onclick="replaceDropdownText(this), renderQuestionStructure()"
-              value="Checkbox Question">Checkbox
+            <a class="dropdown-item" href="javascript: void(0)"
+              onclick="replaceDropdownText(this), renderQuestionStructure()" value="Checkbox Question">Checkbox
               Question</a>
-            <a class="dropdown-item" href="javascript: void(0)" onclick="replaceDropdownText(this), renderQuestionStructure()"
-              value="Open-ended Question">Open-ended
+            <a class="dropdown-item" href="javascript: void(0)"
+              onclick="replaceDropdownText(this), renderQuestionStructure()" value="Open-ended Question">Open-ended
               Question</a>
-            <a class="dropdown-item" href="javascript: void(0)" onclick="replaceDropdownText(this), renderQuestionStructure()"
-              value="Close-ended Question">Close-ended
+            <a class="dropdown-item" href="javascript: void(0)"
+              onclick="replaceDropdownText(this), renderQuestionStructure()" value="Close-ended Question">Close-ended
               Question</a>
           </div>
         </div>

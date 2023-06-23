@@ -69,11 +69,11 @@ def login():
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
         # Ensure username was submitted
-        if not request.form.get("username"):
+        if not request.form.get("username").strip():
             return apology("must provide username", 403)
 
         # Ensure password was submitted
-        elif not request.form.get("password"):
+        elif not request.form.get("password").strip():
             return apology("must provide password", 403)
 
         # Check if user exists in the database. If so, compare their password
@@ -255,6 +255,7 @@ def delete_question():
 
     # User reached route via POST
     if request.method == "POST":
+        # Delete the specific question
         survey_questions_and_answers.delete_one(
             {"_id": int(json.loads(request.data).get("question_id"))}
         )
@@ -288,6 +289,7 @@ def add_survey():
             if survey_list.find_one({"survey_code": survey_code}) is None:
                 break
 
+        # Insert the survey's information into the collection
         survey_list.insert_one(
             {
                 "_id": survey_list.count_documents({}) + 1,
@@ -312,6 +314,7 @@ def delete_survey():
 
     # User reached route via POST
     if request.method == "POST":
+        # Get the survey id, delete the id and the corresponding questions with it
         survey_id = int(json.loads(request.data).get("survey_id"))
         survey_list.delete_one({"_id": survey_id, "user_id": int(session["user_id"])})
         survey_questions_and_answers.delete_many({"survey_id": survey_id})
@@ -333,11 +336,15 @@ def survey(survey_code=None):
 
     # User reached route via GET
     if request.method == "GET":
+        # Check for survey code
         if survey_code is None:
             return render_template("input-code.html")
         survey = survey_list.find_one({"survey_code": survey_code})
+        # Check if survey exists
         if survey is None:
             return apology("survey doesn't exist", 404)
+        
+        # Render the survey
         return render_template(
             "render-survey.html",
             questions=list(
@@ -348,11 +355,14 @@ def survey(survey_code=None):
     
     # User reached route via POST
     else:
+        # Check if survey code exists
         if survey_code is None:
             return redirect(
                 url_for("survey", survey_code=str(request.form.get("survey_code")))
             )
         survey = survey_list.find_one({"survey_code": survey_code})
+
+        # Return apology if survey doesn't exist
         if survey is None:
             return apology("survey doesn't exist", 404)
         survey_id = survey["_id"]
@@ -362,6 +372,8 @@ def survey(survey_code=None):
                 survey_questions_and_answers.find({"survey_id": survey_id})
             )
         ]
+
+        # Update the answers of the survey based on the survey-doer answers
         for question_id in question_id_list:
             question_type = survey_questions_and_answers.find_one({"_id": question_id})[
                 "question_type"
@@ -390,9 +402,11 @@ def survey(survey_code=None):
 @app.route("/return-survey-code", methods=["GET", "POST"])
 @login_required
 def return_code():
+    """Return a specific survey's code"""
 
     # User reached route via POST
     if request.method == "POST":
+        # Return the corresponding survey code
         return jsonify(
             {
                 "survey_code": survey_list.find_one(
@@ -410,15 +424,21 @@ def return_code():
 @app.route("/survey-analytic/<survey_id>", methods=["GET", "POST"])
 @login_required
 def survey_analytic(survey_id=0):
+    """Render the survey analytic page"""
 
     # User reached route via GET
     if request.method == "GET":
+        # Get the authorized surveys that the user has
         authorized_surveys = [
             int(survey["_id"])
             for survey in list(survey_list.find({"user_id": session["user_id"]}))
         ]
+
+        # Check if the user is accessing the authorized survey
         if int(survey_id) not in authorized_surveys:
             return apology("unauthorized access to survey", 403)
+        
+        # Render the survey analytic page
         return render_template(
             "survey-analytic.html",
             questions=list(
@@ -435,9 +455,12 @@ def survey_analytic(survey_id=0):
 @app.route("/render-charts", methods=["GET", "POST"])
 @login_required
 def render_charts():
+    """Return the rendered charts"""
 
     # User reached route via POST
     if request.method == "POST":
+        
+        # Return the charts to render to the web application
         return jsonify(
             {
                 "survey_questions_and_answers": list(
@@ -456,6 +479,7 @@ def render_charts():
 
 @app.route("/logout", methods=["GET", "POST"])
 def logout():
+    """Log out your account"""
     session.clear()
     return redirect("/")
 
@@ -464,6 +488,7 @@ def logout():
 @app.route("/<first>/")
 @app.route("/<first>/<path:rest>")
 def fallback(first=None, rest=None):
+    """Other routes that don't exist will return an apology"""
     return apology("that route doesn't exist", 404)
 
 

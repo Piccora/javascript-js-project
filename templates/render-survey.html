@@ -8,54 +8,62 @@ Do Survey
 <form action="/survey/{{ survey_code }}" method="post">
   {% for question in questions %}
   {% if question["question_type"] == "Open-ended" %}
-  <div class="form-group">
-    <label>{{ question["question"] }}</label>
-    <textarea class="form-control" id='question{{ question["_id"] }}' name='question{{ question["_id"] }}'
-      rows="3"></textarea>
+  <div class="form-group mb-4">
+    <div>
+      <label class="h2">{{ question["question"] }}</label>
+      <textarea class="form-control" id='question{{ question["_id"] }}' name='question{{ question["_id"] }}'
+        rows="3"></textarea>
+    </div>
   </div>
   {% elif question["question_type"] == "Close-ended" %}
-  <div class="form-group">
-    <label>{{ question["question"] }}</label>
-    <div class="form-check">
-      <input class="form-check-input" type="radio" name='question{{ question["_id"] }}'
-        id='question{{ question["_id"] }}' value="Yes">
-      <label class="form-check-label">
-        Yes
-      </label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="radio" name='question{{ question["_id"] }}'
-        id='question{{ question["_id"] }}' value="No">
-      <label class="form-check-label">
-        No
-      </label>
+  <div class="form-group mb-4">
+    <div>
+      <label class="h2">{{ question["question"] }}</label>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name='question{{ question["_id"] }}'
+          id='question{{ question["_id"] }}' value="Yes">
+        <label class="form-check-label">
+          Yes
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name='question{{ question["_id"] }}'
+          id='question{{ question["_id"] }}' value="No">
+        <label class="form-check-label">
+          No
+        </label>
+      </div>
     </div>
   </div>
   {% elif question["question_type"] == "MCQ" %}
-  <div class="form-group">
-    <label>{{ question["question"] }}</label>
-    {% for answer in question["answers"].keys() %}
-    <div class="form-check">
-      <input class="form-check-input" type="radio" name='question{{ question["_id"] }}'
-        id='question{{ question["_id"] }}' value="{{ answer }}">
-      <label class="form-check-label">
-        {{ answer }}
-      </label>
+  <div class="form-group mb-4">
+    <div>
+      <label class="h2">{{ question["question"] }}</label>
+      {% for answer in question["answers"].keys() %}
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name='question{{ question["_id"] }}'
+          id='question{{ question["_id"] }}' value="{{ answer }}">
+        <label class="form-check-label">
+          {{ answer }}
+        </label>
+      </div>
+      {% endfor %}
     </div>
-    {% endfor %}
   </div>
   {% else %}
-  <div class="form-group">
-    <label>{{ question["question"] }}</label>
-    {% for answer in question["answers"].keys() %}
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" name='question{{ question["_id"] }}'
-        id='question{{ question["_id"] }}' value="{{ answer }}">
-      <label class="form-check-label">
-        {{ answer }}
-      </label>
+  <div class="form-group mb-4">
+    <div>
+      <label class="h2">{{ question["question"] }}</label>
+      {% for answer in question["answers"].keys() %}
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name='question{{ question["_id"] }}'
+          id='question{{ question["_id"] }}' value="{{ answer }}">
+        <label class="form-check-label">
+          {{ answer }}
+        </label>
+      </div>
+      {% endfor %}
     </div>
-    {% endfor %}
   </div>
   {% endif %}
   {% endfor %}
