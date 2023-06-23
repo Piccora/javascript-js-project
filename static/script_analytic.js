@@ -1,6 +1,8 @@
 let barColors = ["#EC6B56", "#FFC154", "#47B39C"]
 
 function getQuestions() {
+  `The function to get the questions, then display them on the survey analytic page.`
+  // Make an AJAX request
     $.ajax({
         type: "POST",
         url: "/render-charts",
@@ -11,6 +13,7 @@ function getQuestions() {
         }),
         success: function(response) {
             console.log("response: " + response["response"]);
+            // Get each question, determine the question type, then render the chart based on the question type
             let surveyQuestionsAndAnswers = response["survey_questions_and_answers"];
             let questionType;
             surveyQuestionsAndAnswers.forEach(element => {

@@ -57,21 +57,25 @@ window.onclick = function(event) {
     }
 }
 
+// Display the confirm question deletion modal
 function confirmQuestionDeletion(event) {
     questionDeletionModal.style.display = "block";
     questionId = event.getAttribute("value");
 }
 
+// Display the confirm question sharing modal
 function confirmSurveySharing(event) {
     surveyShareConfirmation.style.display = "block";
     surveyId = event.getAttribute("value");
 }
 
+// Display the adding question modal
 function renderQuestionModal(event) {
     questionAdditionModal.style.display = "block";
     surveyId = event.getAttribute("value");
 }
 
+// Universal function to hide every modal when a modal is closed
 function exitModal() {
     questionDeletionModal.style.display = "none";
     questionAdditionModal.style.display = "none";
@@ -84,10 +88,12 @@ function exitModal() {
     surveyId = undefined;
 }
 
+// Function to replace the initial dropdown text when you click on a question type
 function replaceDropdownText(event) {
     document.getElementById("dropdownQuestionButton").innerHTML = event.getAttribute("value");
 }
 
+// Function to render the corresponding question structure for the right question type
 function renderQuestionStructure() {
     questionType = document.getElementById("dropdownQuestionButton").innerHTML;
     document.getElementById("questionChoices").innerHTML = ""
@@ -149,6 +155,7 @@ function renderQuestionStructure() {
     }
 }
 
+// Function to add a question
 function addQuestion() {
     let questionTypeObject = {
         "Multiple Choice Question": "MCQ",
@@ -156,6 +163,7 @@ function addQuestion() {
         "Open-ended Question": "Open-ended",
         "Close-ended Question": "Close-ended"
     };
+    // Make an AJAX request based on the question type, if there's an error, render the apology page
     if (["Multiple Choice Question", "Checkbox Question"].includes(questionType)) {
         $.ajax({
             type: "POST",
@@ -202,7 +210,9 @@ function addQuestion() {
     }
 }
 
+// Function to delete a specific question
 function deleteQuestion() {
+  // Make an AJAX request to delete the specified question
     $.ajax({
         type: "POST",
         url: "/delete-question",
@@ -219,6 +229,7 @@ function deleteQuestion() {
 }
 
 function shareSurvey() {
+  // Make an AJAX request to get the survey code
     $.ajax({
         type: "POST",
         url: "/return-survey-code",
@@ -228,6 +239,7 @@ function shareSurvey() {
             survey_id: surveyId
         }),
         success: function(response) {
+          // Display the modal containing the survey link, and also the survey code
             document.getElementById("survey_share").innerHTML = "";
             console.log("response: " + response["response"]);
             let survey_link = document.createElement("h3");

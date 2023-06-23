@@ -25,22 +25,28 @@ window.onclick = function(event) {
     }
 };
 
+// Display the confirm survey deletion modal
 function confirmSurveyDeletion(event) {
     surveyDeletionModal.style.display = "block";
     surveyId = event.value;
 }
 
+// Display the confirm survey adding modal
 function confirmSurveyAddition(event) {
     surveyAdditionModal.style.display = "block";
     userId = event.getAttribute("value");
 }
 
+// Universal function to hide all the modals
 function exitModal() {
     surveyDeletionModal.style.display = "none";
+    surveyAdditionModal.style.display = "none";
     surveyId = undefined;
 }
 
+// Function to delete the specific survey, as well as the questions in that survey
 function deleteSurvey() {
+  // An AJAX request to delete the specified survey
     $.ajax({
         type: "POST",
         url: "/delete-survey",
@@ -56,7 +62,9 @@ function deleteSurvey() {
     });
 }
 
+// Function to add a survey
 function addSurvey() {
+  // An AJAX request to add a survey, if there's no survey, render the apology page
     $.ajax({
         type: "POST",
         url: "/add-survey",
