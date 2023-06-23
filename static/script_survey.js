@@ -46,7 +46,7 @@ function exitModal() {
 
 // Function to delete the specific survey, as well as the questions in that survey
 function deleteSurvey() {
-  // An AJAX request to delete the specified survey
+    // An AJAX request to delete the specified survey
     $.ajax({
         type: "POST",
         url: "/delete-survey",
@@ -64,7 +64,7 @@ function deleteSurvey() {
 
 // Function to add a survey
 function addSurvey() {
-  // An AJAX request to add a survey, if there's no survey, render the apology page
+    // An AJAX request to add a survey, if there's no survey, render the apology page
     $.ajax({
         type: "POST",
         url: "/add-survey",

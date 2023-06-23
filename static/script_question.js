@@ -212,7 +212,7 @@ function addQuestion() {
 
 // Function to delete a specific question
 function deleteQuestion() {
-  // Make an AJAX request to delete the specified question
+    // Make an AJAX request to delete the specified question
     $.ajax({
         type: "POST",
         url: "/delete-question",
@@ -229,7 +229,7 @@ function deleteQuestion() {
 }
 
 function shareSurvey() {
-  // Make an AJAX request to get the survey code
+    // Make an AJAX request to get the survey code
     $.ajax({
         type: "POST",
         url: "/return-survey-code",
@@ -239,7 +239,7 @@ function shareSurvey() {
             survey_id: surveyId
         }),
         success: function(response) {
-          // Display the modal containing the survey link, and also the survey code
+            // Display the modal containing the survey link, and also the survey code
             document.getElementById("survey_share").innerHTML = "";
             console.log("response: " + response["response"]);
             let survey_link = document.createElement("h3");

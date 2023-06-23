@@ -1,8 +1,8 @@
 let barColors = ["#EC6B56", "#FFC154", "#47B39C"]
 
+// Function to get the questions, then display them on the survey analytic page.
 function getQuestions() {
-  `The function to get the questions, then display them on the survey analytic page.`
-  // Make an AJAX request
+    // Make an AJAX request
     $.ajax({
         type: "POST",
         url: "/render-charts",
