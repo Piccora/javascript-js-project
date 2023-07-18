@@ -392,7 +392,7 @@ def survey(survey_code=None):
                     )
             elif question_type == "Open-ended":
                 answer = request.form.get("question" + str(question_id)).strip()
-                if not answer:
+                if answer:
                     survey_questions_and_answers.update_one(
                         {"_id": question_id}, {"$push": {"answers": answer}}
                     )
