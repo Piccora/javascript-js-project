@@ -244,7 +244,7 @@ function shareSurvey() {
             console.log("response: " + response["response"]);
             let survey_link = document.createElement("h3");
             let survey_code = document.createElement("h3");
-            survey_link.innerHTML = `<h3>Here's the link to do the survey: https://portfolio-javascript-project.onrender.com/survey/${response["survey_code"]}</h3>`
+            survey_link.innerHTML = `<h3>Here's the link to do the survey: https://${process.env.WEBSITE_URI_NAME}/survey/${response["survey_code"]}</h3>`
             survey_code.innerHTML = `<h3>Or you can use this code in the "Do a survey" section: ${response["survey_code"]}</h3>`
             document.getElementById("survey_share").appendChild(survey_link);
             document.getElementById("survey_share").appendChild(survey_code);
