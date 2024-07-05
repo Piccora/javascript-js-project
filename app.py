@@ -20,13 +20,18 @@ app = Flask(__name__)
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
-# Configure session to use filesystem (instead of signed cookies)
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
-Session(app)
-
 # Configure application to use mongoDB database
 client = MongoClient(os.getenv("CONNECTION"), server_api=ServerApi("1"))
+
+# Configure session to use mongodb (instead of signed cookies)
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "mongodb"
+app.config["SESSION_MONGODB"] = client
+app.config["SESSION_MONGODB_DB"] = "survey-database"
+app.config["SESSION_MONGODB_COLLECT"] = "sessions"
+Session(app)
+
+
 
 # Configuring database's collections
 db = client["survey-database"]
