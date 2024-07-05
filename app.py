@@ -31,8 +31,6 @@ app.config["SESSION_MONGODB_DB"] = "survey-database"
 app.config["SESSION_MONGODB_COLLECT"] = "sessions"
 Session(app)
 
-
-
 # Configuring database's collections
 db = client["survey-database"]
 users = db["user"]
